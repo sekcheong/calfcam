@@ -61,7 +61,7 @@
         /// <summary>
         /// RTSP user agent header
         /// </summary>
-        public static readonly string USER_AGENT_HEADER = "RTSP Client -- Simon Huang";
+        public static readonly string USER_AGENT_HEADER = "RTSP Client";
 
         /// <summary>
         /// RTSP version of 1.0

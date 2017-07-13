@@ -429,11 +429,75 @@ namespace Simon.SharpStreaming.Core
             }
         }
 
-        /// <summary>
-        /// Gets the RTSP response.
-        /// </summary>
-        /// <returns>Success or failed.</returns>
-        private bool GetRtspResponse()
+
+		public static string CreateMD5(string input)
+		{
+			// Use input string to calculate MD5 hash
+			using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create()) {
+				byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+				byte[] hashBytes = md5.ComputeHash(inputBytes);
+
+				// Convert the byte array to hexadecimal string
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < hashBytes.Length; i++) {
+					sb.Append(hashBytes[i].ToString("X2"));
+				}
+				return sb.ToString();
+			}
+		}
+
+
+		public bool SendMessage(string msg)
+		{
+			try {
+				byte[] sendBuffer = Utils.StringToBytes(msg);
+				int sendBytesCount = socket.Send(sendBuffer, sendBuffer.Length, SocketFlags.None);
+				if (sendBytesCount < 1) {
+					return false;
+				}
+			}
+			catch (System.Exception e) {
+				this.OnExceptionOccurred(e);
+				return false;
+			}
+			return true;
+		}
+
+		public string ReceiveMessage()
+		{
+			int len = 0;
+			byte[] buffer = new byte[1024 * 4]; // 4 KB buffer
+			string res = string.Empty;
+
+			socket.ReceiveTimeout = 15000;
+			while (true) {
+				try {
+					len = socket.Receive(buffer, buffer.Length, SocketFlags.None);
+					if (len > 0) {
+						break;
+					}
+					else if (socket.ReceiveTimeout >= 5000) {
+						break;
+					}
+				}
+				catch (SocketException se) {
+					this.OnExceptionOccurred(se);
+					break;
+				}
+			}
+
+			if (len > 0) {
+				res = Utils.BytesToString(buffer, len);
+			}
+
+			return res;
+		}
+
+		/// <summary>
+		/// Gets the RTSP response.
+		/// </summary>
+		/// <returns>Success or failed.</returns>
+		private bool GetRtspResponse()
         {
             bool isOk = false;
             int revBytesCount = 0;
@@ -510,9 +574,9 @@ namespace Simon.SharpStreaming.Core
             }
 
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0} ", Constants.RTSP_CMD_OPTIONS);    // command name of 'OPTIONS'
-            sb.AppendFormat("{0} RTSP/1.0\r\n", requestUrl);   // request url
-            sb.AppendFormat("CSeq: {0}\r\n", (++rtspSeqNum).ToString()); // sequence number
+            sb.AppendFormat("{0} ", Constants.RTSP_CMD_OPTIONS);    
+            sb.AppendFormat("{0} RTSP/1.0\r\n", requestUrl);   
+            sb.AppendFormat("CSeq: {0}\r\n", (++rtspSeqNum).ToString());
           //  sb.AppendFormat("Authorization: Basic {0}\r\n", Base64Encode("admin:1675WisM@d"));
             sb.AppendFormat("User-Agent: {0}\r\n\r\n", Constants.USER_AGENT_HEADER);    // user agent header
 
