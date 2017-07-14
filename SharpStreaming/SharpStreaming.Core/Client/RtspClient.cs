@@ -449,6 +449,7 @@ namespace Simon.SharpStreaming.Core
 
 		public bool SendMessage(string msg)
 		{
+			//
 			try {
 				byte[] sendBuffer = Utils.StringToBytes(msg);
 				int sendBytesCount = socket.Send(sendBuffer, sendBuffer.Length, SocketFlags.None);

@@ -95,7 +95,7 @@ namespace TestClient
 				"admin", p["realm"], p["nonce"], url, re);
 			sb.AppendFormat("User-Agent: {0}\r\n\r\n", Constants.USER_AGENT_HEADER);
 
-			rtspClient.SendMessage(sb.ToString());
+			rtspClient.SendMessage(sb.ToString());  
 			response = rtspClient.ReceiveMessage();
 
 			Console.WriteLine(response);
