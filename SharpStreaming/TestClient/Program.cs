@@ -63,7 +63,6 @@ namespace TestClient
 			sb.AppendFormat("{0} ", Constants.RTSP_CMD_OPTIONS);
 			sb.AppendFormat("{0} RTSP/1.0\r\n", url);
 			sb.AppendFormat("CSeq: {0}\r\n", (++seq).ToString());
-			//  sb.AppendFormat("Authorization: Basic {0}\r\n", Base64Encode("admin:1675WisM@d"));
 			sb.AppendFormat("User-Agent: {0}\r\n\r\n", Constants.USER_AGENT_HEADER);
 
 			rtspClient.SendMessage(sb.ToString());
@@ -91,8 +90,7 @@ namespace TestClient
 			sb.AppendFormat("{0} ", Constants.RTSP_CMD_OPTIONS);
 			sb.AppendFormat("{0} RTSP/1.0\r\n", url);
 			sb.AppendFormat("CSeq: {0}\r\n", (++seq).ToString());
-			sb.AppendFormat("Authorization: Digest username=\"{0}\", realm=\"{1}\", nonce=\"{2}\", uri=\"{3}\", response=\"{4}\"\r\n", 
-				"admin", p["realm"], p["nonce"], url, re);
+			sb.AppendFormat("Authorization: Digest username=\"{0}\", realm=\"{1}\", nonce=\"{2}\", uri=\"{3}\", response=\"{4}\"\r\n", "admin", p["realm"], p["nonce"], url, re);
 			sb.AppendFormat("User-Agent: {0}\r\n\r\n", Constants.USER_AGENT_HEADER);
 
 			rtspClient.SendMessage(sb.ToString());  
